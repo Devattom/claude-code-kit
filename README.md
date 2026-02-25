@@ -9,7 +9,7 @@
 Run these two commands in your terminal:
 
 ```sh
-git clone https://github.com/Devattom/config-claude-code.git ~/.claude-dev-kit
+git clone https://github.com/Devattom/claude-code-kit.git ~/.claude-dev-kit
 sh ~/.claude-dev-kit/scripts/install.sh
 ```
 
