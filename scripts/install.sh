@@ -3,12 +3,12 @@
 # claude-code-kit — Global Installer
 # ==============================================================================
 # Usage (one-liner):
-#   curl -sL https://raw.githubusercontent.com/<user>/claude-code-kit/main/scripts/install.sh | sh
+#   curl -sL https://raw.githubusercontent.com/Devattom/config-claude-code/main/scripts/install.sh | sh
 # ==============================================================================
 
 set -e
 
-REPO_URL="https://github.com/<user>/claude-code-kit.git"
+REPO_URL="https://github.com/Devattom/config-claude-code.git"
 KIT_DIR="$HOME/.claude-dev-kit"
 CLAUDE_DIR="$HOME/.claude"
 

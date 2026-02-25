@@ -9,7 +9,7 @@
 Run this one-liner in your terminal:
 
 ```sh
-curl -sL https://raw.githubusercontent.com/<user>/claude-code-kit/main/scripts/install.sh | sh
+curl -sL https://raw.githubusercontent.com/Devattom/config-claude-code/main/scripts/install.sh | sh
 ```
 
 The installer will:
