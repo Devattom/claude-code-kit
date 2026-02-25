@@ -1,16 +1,30 @@
 {
   "permissions": {
+    "defaultMode": "bypassPermissions",
     "allow": [],
     "deny": [
       "Bash(rm -rf *)",
       "Bash(rm -r /*)",
+      "Bash(rm --no-preserve-root *)",
       "Bash(sudo *)",
+      "Bash(su *)",
+      "Bash(dd *)",
+      "Bash(mkfs *)",
+      "Bash(fdisk *)",
+      "Bash(parted *)",
       "Bash(git push --force *)",
       "Bash(git push -f *)",
+      "Bash(git push --force-with-lease *)",
       "Bash(git reset --hard *)",
       "Bash(git clean -f *)",
+      "Bash(git branch -D *)",
+      "Bash(git tag -d *)",
+      "Bash(npm publish *)",
       "Bash(DROP *)",
-      "Bash(truncate *)"
+      "Bash(truncate *)",
+      "Bash(history -c)",
+      "Bash(pkill *)",
+      "Bash(killall *)"
     ]
   }
 }
