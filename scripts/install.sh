@@ -235,7 +235,69 @@ EOF
 fi
 
 # ==============================================================================
-# STEP 7 — Merge global MCPs into ~/.claude.json
+# STEP 7 — StatusLine
+# ==============================================================================
+title "Status Line"
+
+STATUSLINE_SRC="$KIT_DIR/global/scripts/statusline"
+STATUSLINE_DEST="$CLAUDE_DIR/scripts/statusline"
+STATUSLINE_ENTRY="$STATUSLINE_DEST/index.js"
+INSTALL_STATUSLINE="false"
+
+if [ -d "$STATUSLINE_SRC" ]; then
+  info "The kit includes a built-in status line (Node.js, no extra dependencies):"
+  info "  git branch • project path • model • cost (duration) • context bar%"
+  printf "\n"
+  printf "%s  Options:%s\n" "$BOLD" "$NC"
+  printf "    1) Install kit statusLine (recommended)\n"
+  printf "    2) Skip — I'll set up my own statusLine\n"
+  printf "    3) Skip — I don't want a statusLine\n"
+  ask "Choose [1-3] (default: 1):"
+  read -r _sl_choice
+  case "${_sl_choice:-1}" in
+    2)
+      warn "Skipping statusLine — configure manually in $CLAUDE_DIR/settings.json"
+      ;;
+    3)
+      info "No statusLine will be configured"
+      ;;
+    *)
+      INSTALL_STATUSLINE="true"
+      ;;
+  esac
+fi
+
+if [ "$INSTALL_STATUSLINE" = "true" ]; then
+  mkdir -p "$CLAUDE_DIR/scripts"
+
+  # Copy the statusline directory (overwrites on re-install to pick up updates)
+  rm -rf "$STATUSLINE_DEST"
+  cp -r "$STATUSLINE_SRC" "$STATUSLINE_DEST"
+  chmod +x "$STATUSLINE_ENTRY"
+  success "StatusLine copied to $STATUSLINE_DEST"
+
+  # Patch settings.json to add the statusLine config
+  # Uses node (already required by Claude Code) — no extra dependencies
+  if [ -f "$SETTINGS_FILE" ]; then
+    SETTINGS_FILE="$SETTINGS_FILE" STATUSLINE_ENTRY="$STATUSLINE_ENTRY" node -e "
+const fs = require('fs');
+const p = process.env.SETTINGS_FILE;
+const d = JSON.parse(fs.readFileSync(p, 'utf8'));
+d.statusLine = {
+  type: 'command',
+  command: 'node ' + process.env.STATUSLINE_ENTRY
+};
+fs.writeFileSync(p, JSON.stringify(d, null, 2) + '\n');
+"
+    success "statusLine config added to $SETTINGS_FILE"
+  else
+    warn "settings.json not found — add this to $SETTINGS_FILE manually:"
+    warn "  \"statusLine\": { \"type\": \"command\", \"command\": \"node $STATUSLINE_ENTRY\" }"
+  fi
+fi
+
+# ==============================================================================
+# STEP 8 — Merge global MCPs into ~/.claude.json
 # ==============================================================================
 title "Global MCPs"
 
@@ -275,7 +337,7 @@ else
 fi
 
 # ==============================================================================
-# STEP 8 — Create symlinks for global assets
+# STEP 9 — Create symlinks for global assets
 # ==============================================================================
 title "Linking Global Assets"
 
