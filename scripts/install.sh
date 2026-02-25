@@ -235,12 +235,53 @@ EOF
 fi
 
 # ==============================================================================
-# STEP 7 — Create symlinks for global assets
+# STEP 7 — Merge global MCPs into ~/.claude.json
+# ==============================================================================
+title "Global MCPs"
+
+MCPS_DIR="$KIT_DIR/global/mcps"
+CLAUDE_JSON="$HOME/.claude.json"
+
+if [ -d "$MCPS_DIR" ]; then
+  for _mcp_file in "$MCPS_DIR"/*.json; do
+    [ -f "$_mcp_file" ] || continue
+    _mcp_name=$(basename "$_mcp_file" .json)
+
+    _already=$(CLAUDE_JSON="$CLAUDE_JSON" MCP_NAME="$_mcp_name" node -e "
+const fs = require('fs');
+const p = process.env.CLAUDE_JSON;
+if (!fs.existsSync(p)) { process.stdout.write('no'); process.exit(); }
+const d = JSON.parse(fs.readFileSync(p, 'utf8'));
+process.stdout.write(d.mcpServers && d.mcpServers[process.env.MCP_NAME] ? 'yes' : 'no');
+")
+
+    if [ "$_already" = "yes" ]; then
+      info "MCP $_mcp_name already configured — skipping"
+    else
+      CLAUDE_JSON="$CLAUDE_JSON" MCP_FILE="$_mcp_file" MCP_NAME="$_mcp_name" node -e "
+const fs = require('fs');
+const p = process.env.CLAUDE_JSON;
+const mcp = JSON.parse(fs.readFileSync(process.env.MCP_FILE, 'utf8'));
+const d = fs.existsSync(p) ? JSON.parse(fs.readFileSync(p, 'utf8')) : {};
+d.mcpServers = d.mcpServers || {};
+d.mcpServers[process.env.MCP_NAME] = mcp;
+fs.writeFileSync(p, JSON.stringify(d, null, 2) + '\n');
+"
+      success "MCP $_mcp_name configured"
+    fi
+  done
+else
+  info "No global MCPs to configure"
+fi
+
+# ==============================================================================
+# STEP 8 — Create symlinks for global assets
 # ==============================================================================
 title "Linking Global Assets"
 
 # link_dir <category>
 # Links each subdirectory of $KIT_DIR/global/<category>/ into $CLAUDE_DIR/<category>/
+
 link_dir() {
   _cat="$1"
   _src="$KIT_DIR/global/$_cat"
@@ -271,6 +312,7 @@ link_dir() {
 link_dir "skills"
 link_dir "agents"
 link_dir "commands"
+
 
 # ==============================================================================
 # Done
