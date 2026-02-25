@@ -6,10 +6,11 @@
 
 ## Global Installation
 
-Run this one-liner in your terminal:
+Run these two commands in your terminal:
 
 ```sh
-curl -sL https://raw.githubusercontent.com/Devattom/config-claude-code/main/scripts/install.sh | sh
+git clone https://github.com/Devattom/config-claude-code.git ~/.claude-dev-kit
+sh ~/.claude-dev-kit/scripts/install.sh
 ```
 
 The installer will:

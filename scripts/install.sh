@@ -2,8 +2,9 @@
 # ==============================================================================
 # claude-code-kit — Global Installer
 # ==============================================================================
-# Usage (one-liner):
-#   curl -sL https://raw.githubusercontent.com/Devattom/config-claude-code/main/scripts/install.sh | sh
+# Usage:
+#   git clone https://github.com/Devattom/config-claude-code.git ~/.claude-dev-kit
+#   sh ~/.claude-dev-kit/scripts/install.sh
 # ==============================================================================
 
 set -e
